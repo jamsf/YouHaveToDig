@@ -1,47 +1,37 @@
 package yhtg.scene;
 
-import flixel.FlxG;
-import flixel.group.FlxGroup;
+import yhtg.entities.Player;
 
 /**
- * ...
+ * Dirt Grid controls the entirety of the Dirt grid
  * @author Jams
  */
 class DirtGrid
 {
-
-	public function new(startX:Float, startY:Float, gridStr:Array<Int>) 
+	public function new(x:Float, y:Float) 
 	{
-		_dirtArray = new Array<Dirt>();
-		_dirtTileGroup = new FlxGroup();
-		generateGrid(startX, startY, gridStr);
+		mDirtChunks = new Array<DirtChunk>();
+		mAnchorX = x;
+		mAnchorY = y;
 		
-		FlxG.state.add(_dirtTileGroup);
+		addGrid();
+		addGrid();
 	}
 	
-	public function moveOnDirt(gridX:Int, gridY:Int):Bool
+	public function dig(gridX:Int, gridY:Int):Bool
 	{
-		var dirt : Dirt = _dirtArray[(gridY * GRID_SIZE) + gridX - 1];
-		
-		return dirt.digDirt();
+		var chunk : DirtChunk = mDirtChunks[Math.floor(gridX / DirtChunk.CHUNK_SIZE)];
+		var chunkX : Int = gridX % DirtChunk.CHUNK_SIZE;
+		return chunk.moveOnDirt(chunkX, gridY);
 	}
 	
-	private function generateGrid(startX:Float, startY:Float, gridStr : Array<Int>)
+	public function addGrid():Void
 	{
-		for (i in 0...GRID_SIZE)
-		{
-			for (j in 0...GRID_SIZE)
-			{
-				var dirt : Dirt = new Dirt(startX + (i * Dirt.DIRT_SIZE), startY + (j * Dirt.DIRT_SIZE), gridStr[(i * GRID_SIZE) + j]);
-				_dirtArray.push(dirt);
-				_dirtTileGroup.add(dirt);
-			}
-		}
+		mDirtChunks.push(DirtChunkFactory.buildEasyDirtChunk(mAnchorX, mAnchorY));
+		mAnchorY += Dirt.DIRT_SIZE * DirtChunk.CHUNK_SIZE;
 	}
 	
-	private var _dirtTileGroup:FlxGroup;
-	
-	private var _dirtArray:Array<Dirt>;
-	
-	public inline static var GRID_SIZE : Int = 24;
+	private var mAnchorX : Float;
+	private var mAnchorY : Float;
+	private var mDirtChunks : Array<DirtChunk>;
 }

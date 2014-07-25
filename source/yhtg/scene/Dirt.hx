@@ -8,6 +8,7 @@ import yhtg.utils.AssetDataUtil;
 
 enum DirtType
 {
+	EMPTY;
 	NORMAL;
 	HARD;
 	SOLID;
@@ -23,25 +24,32 @@ class Dirt extends FlxSprite
 	//	- Keep reference of surrounding dirts
 	//  - create better dirt sprites based on surrounding dirt states
 	
-	public function new(X:Float, Y:Float, dirtType:DirtType) 
+	public function new(X:Float, Y:Float, dirtType:Int) 
 	{
 		super(X, Y);
-		loadGraphic(AssetDataUtil.EFFECT_PARTICLE, false, DIRT_SIZE, DIRT_SIZE);
-		setSize(16, 16);
-		_dirtType = dirtType;
+		loadGraphic(AssetDataUtil.EFFECT_PARTICLE, false);
+		setGraphicSize(DIRT_SIZE, DIRT_SIZE);
 		
-		switch(_dirtType)
+		switch(dirtType)
 		{
-			case NORMAL:
+			case 1:
+				_dirtType = EMPTY;
+				color = 0xEEEEEE;
+				_health = 0;
+			case 2:
+				_dirtType = NORMAL;
 				color = 0x00FF00;
 				_health = 1;
-			case HARD:
+			case 3:
+				_dirtType = HARD;
 				color = 0x88FF88;
 				_health = 2;
-			case SOLID:
+			case 4:
+				_dirtType = SOLID;
 				color = 0xCCCCCC;
 				_health = 9999;
 		}
+		alpha = 0.25;
 	}
 	
 	public function digDirt():Bool
@@ -55,5 +63,5 @@ class Dirt extends FlxSprite
 	private var _dirtType : DirtType;
 	private var _health : Int;
 	
-	public inline static var DIRT_SIZE : Int = 16;
+	public inline static var DIRT_SIZE : Int = 24;
 }

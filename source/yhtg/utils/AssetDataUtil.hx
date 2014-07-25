@@ -10,6 +10,11 @@ class AssetDataUtil
 	private function new() { }
 	
 	//-------------------------------------------------
+	// ENTITIES
+	//-------------------------------------------------
+	public inline static var BLANK_DIRT : String = "assets/images/entities/blank_dirt.png";
+	
+	//-------------------------------------------------
 	// MUSIC
 	//-------------------------------------------------
 	
