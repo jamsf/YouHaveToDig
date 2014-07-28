@@ -1,7 +1,9 @@
 package yhtg.states;
 
 import flixel.FlxG;
+import flixel.FlxObject;
 import flixel.FlxState;
+import flixel.input.touch.FlxTouch;
 import flixel.FlxCamera.FlxCameraFollowStyle;
 
 import yhtg.entities.Player;
@@ -34,8 +36,10 @@ class WorldState extends FlxState
 		add(mPlayer);
 		
 		//Camera tracker
-		FlxG.camera.follow(mPlayer, FlxCameraFollowStyle.TOPDOWN ,null, 0);
+		mCameraTarget = new FlxObject(FlxG.width * 0.5, FlxG.height * 0.5);
+		FlxG.camera.follow(mCameraTarget, FlxCameraFollowStyle.LOCKON ,null, 0);
 		FlxG.camera.followLerp = 25.0;
+		
 	}
 	
 	override public function update():Void 
@@ -43,6 +47,9 @@ class WorldState extends FlxState
 		super.update();
 		
 		checkInput();
+		debugTouch();
+		
+		mCameraTarget.y = mPlayer.y;
 	}
 	
 	
@@ -66,12 +73,14 @@ class WorldState extends FlxState
 			mPlayer.playerMovement(Direction.RIGHT);
 		}
 #elseif mobile
-		if (FlxG.touches.list.length == 1)
+		if (FlxG.touches.list.length > 0)
 		{
-			var touch : FlxTouch = FlxG.touches.list[0];
+			var touch : FlxTouch = FlxG.touches.getFirst();
+			if (touch == null)
+				return;
 			
-			var deltaX : Float = Math.abs(touch.screenX - x + (width * 0.5));
-			var deltaY : Float = Math.abs(touch.screenY - y + (height * 0.5));
+			var deltaX : Float = Math.abs(touch.screenX - mPlayer.x + (mPlayer.width * 0.5));
+			var deltaY : Float = Math.abs(touch.screenY - mPlayer.y + (mPlayer.height * 0.5));
 			
 			var angle : Float = Math.atan2(deltaX, deltaY) * (180 / Math.PI);
 			
@@ -99,6 +108,39 @@ class WorldState extends FlxState
 #end
 	}
 	
+	private function debugTouch():Void
+	{
+		if (!FlxG.mouse.justPressed)
+			return;
+		
+		var deltaX : Float = FlxG.mouse.x - (mPlayer.x + (mPlayer.width * 0.5));
+		var deltaY : Float = FlxG.mouse.y - (mPlayer.y + (mPlayer.height * 0.5));
+		
+		var angle : Float = Math.atan2(deltaX, deltaY) * (180 / Math.PI);
+		
+		if (angle > 45 && angle < 135)
+		{
+			// UP
+			mPlayer.playerMovement(Direction.RIGHT);
+		}
+		else if (angle > -135 && angle < -45)
+		{
+			// DOWN
+			mPlayer.playerMovement(Direction.LEFT);
+		}
+		else if (angle >= 135 || angle <= -135)
+		{
+			// LEFT
+			mPlayer.playerMovement(Direction.UP);
+		}
+		else if (angle <= 45 && angle >= -45)
+		{
+			// RIGHT
+			mPlayer.playerMovement(Direction.DOWN);
+		}
+	}
+	
+	private var mCameraTarget : FlxObject;
 	private var mDirtGrid : DirtGrid;
 	private var mPlayer : Player;
 	

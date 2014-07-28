@@ -20,9 +20,10 @@ class DirtGrid
 	
 	public function dig(gridX:Int, gridY:Int):Bool
 	{
-		var chunk : DirtChunk = mDirtChunks[Math.floor(gridX / DirtChunk.CHUNK_SIZE)];
+		var chunk : DirtChunk = mDirtChunks[Math.floor(gridY / (DirtChunk.CHUNK_SIZE))];
 		var chunkX : Int = gridX % DirtChunk.CHUNK_SIZE;
-		return chunk.moveOnDirt(chunkX, gridY);
+		var chunkY : Int = gridY % DirtChunk.CHUNK_SIZE;
+		return chunk.moveOnDirt(chunkX, chunkY);
 	}
 	
 	public function addGrid():Void

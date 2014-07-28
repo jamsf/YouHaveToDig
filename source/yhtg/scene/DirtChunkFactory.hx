@@ -89,7 +89,7 @@ class DirtChunkFactory
 		2,2,2,3,4,4,4,4,4,4,4,4,4,4,4,2,2,2,2,2,2,2,2,2,
 		2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2 ];
 		
-	private static var easyList : Array< Array<Int> > = [ DirtChunkFactory.a, DirtChunkFactory.b, DirtChunkFactory.c ]; 
+	private static var easyList : Array< Array<Int> > = [ DirtChunkFactory.a, DirtChunkFactory.c ]; 
 
 
 }

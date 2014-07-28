@@ -49,14 +49,16 @@ class Dirt extends FlxSprite
 				color = 0xCCCCCC;
 				_health = 9999;
 		}
-		alpha = 0.25;
 	}
 	
 	public function digDirt():Bool
 	{
 		--_health;
 		if (_health < 1)
+		{
+			color = 0x000000;
 			return true;
+		}
 		return false;
 	}
 	
