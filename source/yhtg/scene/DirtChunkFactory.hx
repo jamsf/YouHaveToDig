@@ -9,9 +9,9 @@ package yhtg.scene;
 class DirtChunkFactory
 {
 	
-	public static function buildEasyDirtChunk(x:Float, y:Float) : DirtChunk
+	public static function buildEasyDirtChunk(x:Float, y:Float, grid:DirtGrid) : DirtChunk
 	{
-		return new DirtChunk(x, y, easyList[Math.round(Math.random() * (easyList.length - 1))]);
+		return new DirtChunk(x, y, easyList[Math.round(Math.random() * (easyList.length - 1))], grid);
 	}
 	
 	private static var a : Array<Int> = [2,2,2,2,2,2,2,2,2,3,3,2,3,3,2,2,2,2,2,2,2,2,2,2,

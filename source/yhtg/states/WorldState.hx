@@ -38,7 +38,7 @@ class WorldState extends FlxState
 		//Camera tracker
 		mCameraTarget = new FlxObject(FlxG.width * 0.5, FlxG.height * 0.5);
 		FlxG.camera.follow(mCameraTarget, FlxCameraFollowStyle.LOCKON ,null, 0);
-		FlxG.camera.followLerp = 25.0;
+		FlxG.camera.followLerp = 5.0;
 		
 	}
 	
@@ -79,30 +79,32 @@ class WorldState extends FlxState
 			if (touch == null)
 				return;
 			
-			var deltaX : Float = Math.abs(touch.screenX - mPlayer.x + (mPlayer.width * 0.5));
-			var deltaY : Float = Math.abs(touch.screenY - mPlayer.y + (mPlayer.height * 0.5));
+			//var deltaX : Float = Math.abs(touch.screenX - mPlayer.x + (mPlayer.width * 0.5));
+			//var deltaY : Float = Math.abs(touch.screenY - mPlayer.y + (mPlayer.height * 0.5));
+			var deltaX : Float = touch.screenX - (FlxG.width * 0.5);
+			var deltaY : Float = touch.screenY - (FlxG.height * 0.5);
 			
 			var angle : Float = Math.atan2(deltaX, deltaY) * (180 / Math.PI);
 			
 			if (angle > 45 && angle < 135)
 			{
 				// UP
-				mPlayer.playerMovement(Direction.UP);
+				mPlayer.playerMovement(Direction.RIGHT);
 			}
 			else if (angle > -135 && angle < -45)
 			{
 				// DOWN
-				mPlayer.playerMovement(Direction.DOWN);
+				mPlayer.playerMovement(Direction.LEFT);
 			}
 			else if (angle >= 135 || angle <= -135)
 			{
 				// LEFT
-				mPlayer.playerMovement(Direction.LEFT);
+				mPlayer.playerMovement(Direction.UP);
 			}
 			else if (angle <= 45 && angle >= -45)
 			{
 				// RIGHT
-				mPlayer.playerMovement(Direction.RIGHT);
+				mPlayer.playerMovement(Direction.DOWN);
 			}
 		}
 #end
@@ -113,11 +115,13 @@ class WorldState extends FlxState
 		if (!FlxG.mouse.justPressed)
 			return;
 		
-		var deltaX : Float = FlxG.mouse.x - (mPlayer.x + (mPlayer.width * 0.5));
-		var deltaY : Float = FlxG.mouse.y - (mPlayer.y + (mPlayer.height * 0.5));
+		//var deltaX : Float = FlxG.mouse.x - (mPlayer.x + (mPlayer.width * 0.5));
+		//var deltaY : Float = FlxG.mouse.y - (mPlayer.y + (mPlayer.height * 0.5));
+		var deltaX : Float = FlxG.mouse.screenX - (FlxG.width * 0.5);
+		var deltaY : Float = FlxG.mouse.screenY - (FlxG.height * 0.5);
 		
 		var angle : Float = Math.atan2(deltaX, deltaY) * (180 / Math.PI);
-		
+		trace("ANGLE: " + angle);
 		if (angle > 45 && angle < 135)
 		{
 			// UP

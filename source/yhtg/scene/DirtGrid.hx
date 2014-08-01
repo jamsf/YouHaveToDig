@@ -1,5 +1,8 @@
 package yhtg.scene;
 
+import flixel.group.FlxGroup;
+import flixel.FlxG;
+
 import yhtg.entities.Player;
 
 /**
@@ -8,14 +11,20 @@ import yhtg.entities.Player;
  */
 class DirtGrid
 {
+	public var DirtChunkGroup(get, never) : FlxGroup;
+	public function get_DirtChunkGroup() : FlxGroup { return mDirtChunkGroup; }
+	
 	public function new(x:Float, y:Float) 
 	{
 		mDirtChunks = new Array<DirtChunk>();
+		mDirtChunkGroup = new FlxGroup();
 		mAnchorX = x;
 		mAnchorY = y;
 		
 		addGrid();
 		addGrid();
+		
+		FlxG.state.add(mDirtChunkGroup);
 	}
 	
 	public function dig(gridX:Int, gridY:Int):Bool
@@ -28,11 +37,12 @@ class DirtGrid
 	
 	public function addGrid():Void
 	{
-		mDirtChunks.push(DirtChunkFactory.buildEasyDirtChunk(mAnchorX, mAnchorY));
+		mDirtChunks.push(DirtChunkFactory.buildEasyDirtChunk(mAnchorX, mAnchorY, this));
 		mAnchorY += Dirt.DIRT_SIZE * DirtChunk.CHUNK_SIZE;
 	}
 	
 	private var mAnchorX : Float;
 	private var mAnchorY : Float;
 	private var mDirtChunks : Array<DirtChunk>;
+	private var mDirtChunkGroup : FlxGroup;
 }

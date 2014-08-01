@@ -31,6 +31,9 @@ class Player extends FlxSprite
 	public var GridY(get, never) : Int;
 	public function get_GridY() : Int { return mGridY; }
 	
+	public var MaxDepth(get, never) : Int;
+	public function get_MaxDepth() : Int { return mMaxDepth; }
+	
 	public function new(X:Float=0, Y:Float=0, grid:DirtGrid) 
 	{
 		super(X, Y);
@@ -38,6 +41,8 @@ class Player extends FlxSprite
 		
 		mGridX = 0;
 		mGridY = -1;
+		mMaxDepth = 0;
+		mNextChunkDepth = DirtChunk.CHUNK_SIZE;
 		
 		mDirtGrid = grid;
 		mMoving = false;
@@ -58,39 +63,45 @@ class Player extends FlxSprite
 			return;
 		switch(dir)
 		{
-			case UP:
-				if (mDirtGrid.dig(mGridX, mGridY - 1))
+		case UP:
+			if (mDirtGrid.dig(mGridX, mGridY - 1))
+			{
+				mGridY--;
+				FlxTween.tween(this, { y:(y - Dirt.DIRT_SIZE) }, 0.05, { ease:FlxEase.quadIn, complete:endMovementCallback } );
+				mMoving = true;
+			}
+			// else do animation
+		case DOWN:
+			if (mDirtGrid.dig(mGridX, mGridY + 1))
+			{
+				mGridY++;
+				FlxTween.tween(this, { y:(y + Dirt.DIRT_SIZE) }, 0.05, { ease:FlxEase.quadIn, complete:endMovementCallback } );
+				mMoving = true;
+				mMaxDepth = mMaxDepth > mGridY ? mMaxDepth : mGridY;
+				if (mMaxDepth >= mNextChunkDepth)
 				{
-					mGridY--;
-					FlxTween.tween(this, { y:(y - Dirt.DIRT_SIZE) }, 0.05, { ease:FlxEase.quadIn, complete:endMovementCallback } );
-					mMoving = true;
+					mDirtGrid.addGrid();
+					mNextChunkDepth += DirtChunk.CHUNK_SIZE;
 				}
-				// else do animation
-			case DOWN:
-				if (mDirtGrid.dig(mGridX, mGridY + 1))
-				{
-					mGridY++;
-					FlxTween.tween(this, { y:(y + Dirt.DIRT_SIZE) }, 0.05, { ease:FlxEase.quadIn, complete:endMovementCallback } );
-					mMoving = true;
-				}
-				
-			case LEFT:
-				if (mDirtGrid.dig(mGridX - 1, mGridY))
-				{
-					mGridX--;
-					FlxTween.tween(this, { x:(x - Dirt.DIRT_SIZE) }, 0.05, { ease:FlxEase.quadIn, complete:endMovementCallback } );
-					mMoving = true;
-				}
-				
-			case RIGHT:
-				if (mDirtGrid.dig(mGridX + 1, mGridY))
-				{
-					mGridX++;
-					FlxTween.tween(this, { x:(x + Dirt.DIRT_SIZE) }, 0.05, { ease:FlxEase.quadIn, complete:endMovementCallback } );
-					mMoving = true;
-				}
-				
+			}
+			
+		case LEFT:
+			if (mDirtGrid.dig(mGridX - 1, mGridY))
+			{
+				mGridX--;
+				FlxTween.tween(this, { x:(x - Dirt.DIRT_SIZE) }, 0.05, { ease:FlxEase.quadIn, complete:endMovementCallback } );
+				mMoving = true;
+			}
+			
+		case RIGHT:
+			if (mDirtGrid.dig(mGridX + 1, mGridY))
+			{
+				mGridX++;
+				FlxTween.tween(this, { x:(x + Dirt.DIRT_SIZE) }, 0.05, { ease:FlxEase.quadIn, complete:endMovementCallback } );
+				mMoving = true;
+			}
 		}
+		
 	}
 	
 	private function endMovementCallback(tween:FlxTween):Void
@@ -98,9 +109,13 @@ class Player extends FlxSprite
 		mMoving = false;
 	}
 	
+	private var mMaxDepth : Int;
+	private var mNextChunkDepth : Int;
+	
 	private var mGridX : Int;
 	private var mGridY : Int;
 	private var mMoving : Bool;
+	
 	
 	private var mDirtGrid : DirtGrid;
 }
