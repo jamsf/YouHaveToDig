@@ -51,8 +51,6 @@ class WorldState extends FlxState
 		checkInput();
 		debugTouch();
 		
-		if (mPlayer.)
-		
 		FlxG.overlap(mPlayer, mDeathFog, deathCallback);
 		
 		mCameraTarget.y = mPlayer.y;
