@@ -3,7 +3,7 @@ package yhtg.scene;
 import flixel.group.FlxGroup;
 import flixel.FlxG;
 
-import yhtg.entities.Player;
+import yhtg.entities.Player; 
 
 /**
  * Dirt Grid controls the entirety of the Dirt grid
@@ -11,20 +11,20 @@ import yhtg.entities.Player;
  */
 class DirtGrid
 {
-	public var DirtChunkGroup(get, never) : FlxGroup;
-	public function get_DirtChunkGroup() : FlxGroup { return mDirtChunkGroup; }
+	public var DirtChunkGroup(get, never):FlxGroup;
+	public function get_DirtChunkGroup():FlxGroup { return mDirtChunkGroup; }
 	
 	public function new(x:Float, y:Float) 
 	{
-		mDirtChunks = new Array<DirtChunk>();
 		mDirtChunkGroup = new FlxGroup();
+		mDirtChunks = new Array<DirtChunk>();
 		mAnchorX = x;
 		mAnchorY = y;
 		
-		addGrid();
-		addGrid();
-		
 		FlxG.state.add(mDirtChunkGroup);
+		
+		addChunk();
+		addChunk();
 	}
 	
 	public function dig(gridX:Int, gridY:Int):Bool
@@ -35,10 +35,19 @@ class DirtGrid
 		return chunk.moveOnDirt(chunkX, chunkY);
 	}
 	
-	public function addGrid():Void
+	public function addChunk():Void
 	{
 		mDirtChunks.push(DirtChunkFactory.buildEasyDirtChunk(mAnchorX, mAnchorY, this));
 		mAnchorY += Dirt.DIRT_SIZE * DirtChunk.CHUNK_SIZE;
+		
+		var removeIndex : Int = mDirtChunks.length - 2;
+		if (removeIndex > 0)
+			destroyChunk(removeIndex);
+	}
+	
+	public function destroyChunk(index:Int):Void
+	{
+		mDirtChunks[index].destroy();
 	}
 	
 	private var mAnchorX : Float;

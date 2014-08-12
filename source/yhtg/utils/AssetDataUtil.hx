@@ -13,6 +13,8 @@ class AssetDataUtil
 	// ENTITIES
 	//-------------------------------------------------
 	public inline static var BLANK_DIRT : String = "assets/images/entities/blank_dirt.png";
+	public inline static var PLAYER_SPRMAP : String = "assets/images/entities/actor_1.png";
+	public inline static var EFFECT_PARTICLE : String = "assets/images/effects/particle.png";
 	
 	//-------------------------------------------------
 	// MUSIC
@@ -32,8 +34,14 @@ class AssetDataUtil
 	//-------------------------------------------------
 	
 	//-------------------------------------------------
-	// EFFECTS
+	// TILES
 	//-------------------------------------------------
-	public inline static var EFFECT_PARTICLE : String = "assets/images/effects/particle.png";
+	public inline static var TILES_MAP : String = "assets/data/tiles.png";
+	public inline static var TEST_TILES : String = "assets/images/tiles/test.png";
+	
+	//-------------------------------------------------
+	// DATA
+	//-------------------------------------------------
+	public inline static var TILES_DATA : String = "assets/data/tiles.txt";
 	
 }

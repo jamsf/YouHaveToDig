@@ -19,6 +19,12 @@ enum Direction
 	RIGHT;
 }
 
+enum Facing
+{
+	LEFT;
+	RIGHT;
+}
+
 /**
  * ...
  * @author Jams
@@ -37,7 +43,16 @@ class Player extends FlxSprite
 	public function new(X:Float=0, Y:Float=0, grid:DirtGrid) 
 	{
 		super(X, Y);
-		trace(X + "," + Y);
+		loadGraphic(AssetDataUtil.PLAYER_SPRMAP, true, 32, 32);
+		animation.add("idleLeft", [0], 0, false);
+		animation.add("idleRight", [1], 0, false);
+		animation.add("digLeft", [2], 0, false);
+		animation.add("digRight", [3], 0, false);
+		animation.add("digDownLeft", [4], 0, false);
+		animation.add("digDownRight", [5], 0, false);
+		animation.add("digUpLeft", [6], 0, false);
+		animation.add("digUpRight", [7], 0, false);
+		animation.play("idleLeft");
 		
 		mGridX = 0;
 		mGridY = -1;
@@ -46,10 +61,7 @@ class Player extends FlxSprite
 		
 		mDirtGrid = grid;
 		mMoving = false;
-		this.loadGraphic(AssetDataUtil.EFFECT_PARTICLE, false);
-		setGraphicSize(Dirt.DIRT_SIZE, Dirt.DIRT_SIZE);
-		color = 0xFF0000;
-		
+		mFacing = LEFT;
 	}
 	
 	override public function update():Void 
@@ -64,13 +76,17 @@ class Player extends FlxSprite
 		switch(dir)
 		{
 		case UP:
+			if (mGridY == -1)
+				return;
 			if (mDirtGrid.dig(mGridX, mGridY - 1))
 			{
 				mGridY--;
 				FlxTween.tween(this, { y:(y - Dirt.DIRT_SIZE) }, 0.05, { ease:FlxEase.quadIn, complete:endMovementCallback } );
 				mMoving = true;
 			}
-			// else do animation
+			if (mFacing == RIGHT) animation.play("digUpRight");
+			else animation.play("digUpLeft");
+		// else do animation
 		case DOWN:
 			if (mDirtGrid.dig(mGridX, mGridY + 1))
 			{
@@ -80,26 +96,32 @@ class Player extends FlxSprite
 				mMaxDepth = mMaxDepth > mGridY ? mMaxDepth : mGridY;
 				if (mMaxDepth >= mNextChunkDepth)
 				{
-					mDirtGrid.addGrid();
+					mDirtGrid.addChunk();
 					mNextChunkDepth += DirtChunk.CHUNK_SIZE;
 				}
 			}
+			if (mFacing == RIGHT) animation.play("digDownRight");
+			else animation.play("digDownLeft");
 			
 		case LEFT:
-			if (mDirtGrid.dig(mGridX - 1, mGridY))
+			if (mGridY == -1 || mDirtGrid.dig(mGridX - 1, mGridY))
 			{
 				mGridX--;
 				FlxTween.tween(this, { x:(x - Dirt.DIRT_SIZE) }, 0.05, { ease:FlxEase.quadIn, complete:endMovementCallback } );
 				mMoving = true;
+				mFacing = LEFT;
 			}
+			animation.play("digLeft");
 			
 		case RIGHT:
-			if (mDirtGrid.dig(mGridX + 1, mGridY))
+			if (mGridY == -1 || mDirtGrid.dig(mGridX + 1, mGridY))
 			{
 				mGridX++;
 				FlxTween.tween(this, { x:(x + Dirt.DIRT_SIZE) }, 0.05, { ease:FlxEase.quadIn, complete:endMovementCallback } );
 				mMoving = true;
+				mFacing = RIGHT;
 			}
+			animation.play("digRight");
 		}
 		
 	}
@@ -116,6 +138,7 @@ class Player extends FlxSprite
 	private var mGridY : Int;
 	private var mMoving : Bool;
 	
+	private var mFacing : Facing;
 	
 	private var mDirtGrid : DirtGrid;
 }

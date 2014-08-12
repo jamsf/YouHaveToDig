@@ -5,6 +5,7 @@ import flixel.FlxObject;
 import flixel.FlxState;
 import flixel.input.touch.FlxTouch;
 import flixel.FlxCamera.FlxCameraFollowStyle;
+import yhtg.entities.DeathFog;
 
 import yhtg.entities.Player;
 import yhtg.scene.Dirt;
@@ -32,14 +33,15 @@ class WorldState extends FlxState
 		var anchorY : Float  = FlxG.height * 0.5;
 		mDirtGrid = new DirtGrid(anchorX, anchorY);
 		mPlayer = new Player(anchorX, anchorY - Dirt.DIRT_SIZE, mDirtGrid);
+		mDeathFog = new DeathFog(anchorX, anchorY - (Dirt.DIRT_SIZE * 3), 80);
 		
 		add(mPlayer);
+		add(mDeathFog);
 		
 		//Camera tracker
 		mCameraTarget = new FlxObject(FlxG.width * 0.5, FlxG.height * 0.5);
 		FlxG.camera.follow(mCameraTarget, FlxCameraFollowStyle.LOCKON ,null, 0);
 		FlxG.camera.followLerp = 5.0;
-		
 	}
 	
 	override public function update():Void 
@@ -48,6 +50,10 @@ class WorldState extends FlxState
 		
 		checkInput();
 		debugTouch();
+		
+		if (mPlayer.)
+		
+		FlxG.overlap(mPlayer, mDeathFog, deathCallback);
 		
 		mCameraTarget.y = mPlayer.y;
 	}
@@ -75,7 +81,7 @@ class WorldState extends FlxState
 #elseif mobile
 		if (FlxG.touches.list.length > 0)
 		{
-			var touch : FlxTouch = FlxG.touches.getFirst();
+			var touch : FlxTouch = FlxG.touches.justStarted()[0];
 			if (touch == null)
 				return;
 			
@@ -108,6 +114,11 @@ class WorldState extends FlxState
 			}
 		}
 #end
+	}
+	
+	private function deathCallback(Object1:FlxObject, Object2:FlxObject):Void
+	{
+		FlxG.switchState(new GameOverState(mPlayer.MaxDepth));
 	}
 	
 	private function debugTouch():Void
@@ -146,6 +157,8 @@ class WorldState extends FlxState
 	
 	private var mCameraTarget : FlxObject;
 	private var mDirtGrid : DirtGrid;
+	
 	private var mPlayer : Player;
+	private var mDeathFog : DeathFog;
 	
 }

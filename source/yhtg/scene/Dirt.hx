@@ -65,5 +65,5 @@ class Dirt extends FlxSprite
 	private var _dirtType : DirtType;
 	private var _health : Int;
 	
-	public inline static var DIRT_SIZE : Int = 24;
+	public inline static var DIRT_SIZE : Int = 32;
 }
