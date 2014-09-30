@@ -3,6 +3,7 @@ package yhtg.states;
 import flixel.FlxG;
 import flixel.FlxState;
 import flixel.text.FlxText;
+import flixel.ui.FlxButton;
 import flixel.util.FlxColor;
 
 /**
@@ -37,11 +38,28 @@ class GameOverState extends FlxState
 		mInfoText.alignment = "center";
 		mInfoText.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.RED, 1);
 		
+		mRetryBtn = new FlxButton(FlxG.width * 0.5-50, FlxG.height * 0.75, "Retry", retryBtnCallback);
+		mRetryBtn.setGraphicSize(200, 100);
+		mRetryBtn.setSize(200, 100);
+		
 		add(mGameOverText);
 		add(mInfoText);
+		add(mRetryBtn);
+	}
+	
+	private function retryBtnCallback():Void
+	{
+		FlxG.switchState(new WorldState());
+	}
+	
+	override public function update():Void 
+	{
+		super.update();
 	}
 	
 	private var mGameOverText : FlxText;
 	private var mInfoText : FlxText;
+	private var mRetryBtn : FlxButton;
+	
 	private var mDepth : Int;
 }

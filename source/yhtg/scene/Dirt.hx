@@ -1,9 +1,10 @@
 package yhtg.scene;
 
 import flixel.FlxSprite;
-import flixel.system.FlxAssets.FlxGraphicAsset;
-import yhtg.scene.Dirt.DirtType;
+import flixel.FlxG;
+import yhtg.effects.DirtCracks;
 
+import yhtg.scene.Dirt.DirtType;
 import yhtg.utils.AssetDataUtil;
 
 enum DirtType
@@ -12,42 +13,38 @@ enum DirtType
 	NORMAL;
 	HARD;
 	SOLID;
+	IMPASSABLE;
 }
 
 /**
  * ...
  * @author Jams
  */
-class Dirt extends FlxSprite
+class Dirt
 {
-	// TODO:
-	//	- Keep reference of surrounding dirts
-	//  - create better dirt sprites based on surrounding dirt states
-	
 	public function new(X:Float, Y:Float, dirtType:Int) 
 	{
-		super(X, Y);
-		loadGraphic(AssetDataUtil.EFFECT_PARTICLE, false);
-		setGraphicSize(DIRT_SIZE, DIRT_SIZE);
+		x = X;
+		y = Y;
 		
 		switch(dirtType)
 		{
 			case 1:
 				_dirtType = EMPTY;
-				color = 0xEEEEEE;
 				_health = 0;
+				_maxHealth = 0;
 			case 2:
 				_dirtType = NORMAL;
-				color = 0x00FF00;
 				_health = 1;
+				_maxHealth = 1;
 			case 3:
 				_dirtType = HARD;
-				color = 0x88FF88;
-				_health = 2;
-			case 4:
+				_health = 3;
+				_maxHealth = 3;
+			case 4: 
 				_dirtType = SOLID;
-				color = 0xCCCCCC;
-				_health = 9999;
+				_health = 8;
+				_maxHealth = 8;
 		}
 	}
 	
@@ -56,14 +53,44 @@ class Dirt extends FlxSprite
 		--_health;
 		if (_health < 1)
 		{
-			color = 0x000000;
+			if (_cracks != null)
+			{
+				FlxG.state.remove(_cracks);
+				_cracks = null;
+			}
 			return true;
+		}
+		else
+		{
+			updateCrack();
 		}
 		return false;
 	}
 	
+	private function updateCrack():Void
+	{
+		if (_cracks == null)
+		{
+			_cracks = new DirtCracks(x, y);
+			FlxG.state.add(_cracks);
+		}
+			
+		if (_dirtType == HARD)
+			_cracks.animation.play(HARD_CRACKS[_health - 1]);
+		else if (_dirtType == SOLID)
+			_cracks.animation.play(SOLID_CRACKS[_health - 1] );
+	}
+	
+	private var x : Float;
+	private var y : Float;
 	private var _dirtType : DirtType;
 	private var _health : Int;
+	private var _maxHealth : Int;
+	
+	private var _cracks : DirtCracks;
+	
+	private static var HARD_CRACKS : Array<String> = ["3", "1"];
+	private static var SOLID_CRACKS : Array<String> = ["3", "3", "2", "2", "1", "1", "0", "0"];
 	
 	public inline static var DIRT_SIZE : Int = 32;
 }

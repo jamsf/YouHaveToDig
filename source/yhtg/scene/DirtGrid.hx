@@ -23,8 +23,8 @@ class DirtGrid
 		
 		FlxG.state.add(mDirtChunkGroup);
 		
-		addChunk();
-		addChunk();
+		addChunk(0);
+		addChunk(0);
 	}
 	
 	public function dig(gridX:Int, gridY:Int):Bool
@@ -35,9 +35,9 @@ class DirtGrid
 		return chunk.moveOnDirt(chunkX, chunkY);
 	}
 	
-	public function addChunk():Void
+	public function addChunk(depth:Int):Void
 	{
-		mDirtChunks.push(DirtChunkFactory.buildEasyDirtChunk(mAnchorX, mAnchorY, this));
+		mDirtChunks.push(DirtChunkFactory.buildNextDirtChunk(mAnchorX, mAnchorY, this, depth));
 		mAnchorY += Dirt.DIRT_SIZE * DirtChunk.CHUNK_SIZE;
 		
 		var removeIndex : Int = mDirtChunks.length - 2;

@@ -54,7 +54,7 @@ class Player extends FlxSprite
 		animation.add("digUpRight", [7], 0, false);
 		animation.play("idleLeft");
 		
-		mGridX = 0;
+		mGridX = 7;
 		mGridY = -1;
 		mMaxDepth = 0;
 		mNextChunkDepth = DirtChunk.CHUNK_SIZE;
@@ -96,7 +96,7 @@ class Player extends FlxSprite
 				mMaxDepth = mMaxDepth > mGridY ? mMaxDepth : mGridY;
 				if (mMaxDepth >= mNextChunkDepth)
 				{
-					mDirtGrid.addChunk();
+					mDirtGrid.addChunk(mMaxDepth);
 					mNextChunkDepth += DirtChunk.CHUNK_SIZE;
 				}
 			}
@@ -104,7 +104,7 @@ class Player extends FlxSprite
 			else animation.play("digDownLeft");
 			
 		case LEFT:
-			if (mGridY == -1 || mDirtGrid.dig(mGridX - 1, mGridY))
+			if (mGridY == -1 || (mGridX > 0 && mDirtGrid.dig(mGridX - 1, mGridY)))
 			{
 				mGridX--;
 				FlxTween.tween(this, { x:(x - Dirt.DIRT_SIZE) }, 0.05, { ease:FlxEase.quadIn, complete:endMovementCallback } );
@@ -114,7 +114,7 @@ class Player extends FlxSprite
 			animation.play("digLeft");
 			
 		case RIGHT:
-			if (mGridY == -1 || mDirtGrid.dig(mGridX + 1, mGridY))
+			if (mGridY == -1 || (mGridX < DirtChunk.CHUNK_SIZE-1 && mDirtGrid.dig(mGridX + 1, mGridY)))
 			{
 				mGridX++;
 				FlxTween.tween(this, { x:(x + Dirt.DIRT_SIZE) }, 0.05, { ease:FlxEase.quadIn, complete:endMovementCallback } );
